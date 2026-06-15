@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#c1272d">
+<meta name="apple-mobile-web-app-title" content="Español">
+<title>¡Mi Español! · Study Tracker</title>
+<style>
+  :root{--rojo:#c1272d;--rojo-dark:#9c1d22;--oro:#f0a500;--oro-soft:#ffd97a;--ink:#2b2118;--muted:#8a7c6d;--bg:#fbf6ee;--card:#ffffff;--line:#efe6d8;--green:#3a9d6e;--purple:#7c5cbf;--shadow:0 6px 22px rgba(80,50,20,.08);--radius:18px}
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink);padding-bottom:88px;overscroll-behavior-y:contain;-webkit-font-smoothing:antialiased}
+  header{background:linear-gradient(135deg,var(--rojo),var(--rojo-dark));color:#fff;padding:calc(env(safe-area-inset-top) + 18px) 20px 22px;border-radius:0 0 26px 26px;box-shadow:0 8px 24px rgba(140,30,30,.22);position:relative;overflow:hidden}
+  header::after{content:"";position:absolute;right:-30px;top:-30px;width:140px;height:140px;background:radial-gradient(circle,rgba(255,255,255,.16),transparent 70%)}
+  header h1{margin:0;font-size:22px;font-weight:800;letter-spacing:.3px;display:flex;align-items:center;gap:8px}
+  header p{margin:4px 0 0;font-size:13px;opacity:.9}
+  .head-row{margin-top:14px;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  .head-pill{display:inline-flex;align-items:center;gap:7px;background:rgba(255,255,255,.18);backdrop-filter:blur(4px);padding:8px 14px;border-radius:999px;font-weight:700;font-size:14px}
+  .lang-pill{padding:4px;gap:4px;margin-left:auto}
+  .lang-pill button{border:none;background:transparent;color:#fff;font-weight:800;font-size:13px;padding:5px 11px;border-radius:999px;cursor:pointer;opacity:.65}
+  .lang-pill button.on{background:#fff;color:var(--rojo);opacity:1}
+  main{max-width:560px;margin:0 auto;padding:16px 14px 0}
+  .view{display:none;animation:fade .25s ease}
+  .view.active{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  .card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px;margin-bottom:14px;border:1px solid var(--line)}
+  .card h2{margin:0 0 14px;font-size:16px;font-weight:800;display:flex;align-items:center;gap:8px}
+  .card h2 .sub{font-weight:500;font-size:12px;color:var(--muted);margin-left:auto}
+  label{display:block;font-size:13px;font-weight:700;margin:0 0 7px;color:var(--ink)}
+  .hint{font-weight:500;color:var(--muted);font-size:12px}
+  input[type=text],input[type=number],input[type=date],textarea,select{width:100%;padding:13px 14px;border:1.5px solid var(--line);border-radius:13px;font-size:16px;font-family:inherit;background:#fffdf9;color:var(--ink);outline:none;transition:border .15s}
+  input:focus,textarea:focus,select:focus{border-color:var(--oro)}
+  textarea{resize:vertical;min-height:64px}
+  .field{margin-bottom:16px}
+  .stepper{display:flex;align-items:center;gap:10px}
+  .stepper button{width:46px;height:46px;border-radius:13px;border:none;font-size:22px;font-weight:700;background:var(--oro-soft);color:var(--rojo-dark);cursor:pointer;flex:none;line-height:1}
+  .stepper button:active{transform:scale(.92)}
+  .stepper input{text-align:center;font-weight:800;font-size:18px}
+  .quick{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+  .quick button{border:1.5px solid var(--line);background:#fff;border-radius:999px;padding:7px 12px;font-size:13px;font-weight:600;color:var(--muted);cursor:pointer}
+  .quick button:active{background:var(--oro-soft)}
+  .chips{display:flex;flex-wrap:wrap;gap:8px}
+  .chip{border:1.5px solid var(--line);background:#fff;border-radius:999px;padding:9px 14px;font-size:14px;font-weight:600;cursor:pointer;user-select:none;transition:all .12s;color:var(--ink);display:inline-flex;align-items:center;gap:6px}
+  .chip.on{background:var(--rojo);border-color:var(--rojo);color:#fff;box-shadow:0 3px 10px rgba(193,39,45,.3)}
+  .scale{display:flex;gap:8px}
+  .scale button{flex:1;border:1.5px solid var(--line);background:#fff;border-radius:13px;padding:11px 4px;font-size:22px;cursor:pointer;transition:all .12s}
+  .scale button .lbl{display:block;font-size:10px;font-weight:700;color:var(--muted);margin-top:3px}
+  .scale button.on{background:var(--oro-soft);border-color:var(--oro);transform:translateY(-2px)}
+  .scale.diff button.on{background:#ffe0e0;border-color:var(--rojo)}
+  .btn-primary{width:100%;padding:16px;border:none;border-radius:15px;background:linear-gradient(135deg,var(--rojo),var(--rojo-dark));color:#fff;font-size:17px;font-weight:800;cursor:pointer;box-shadow:0 6px 16px rgba(193,39,45,.32);margin-top:4px}
+  .btn-primary:active{transform:scale(.99)}
+  .btn-ghost{width:100%;padding:13px;border:1.5px solid var(--line);border-radius:13px;background:#fff;color:var(--muted);font-weight:700;font-size:14px;cursor:pointer;margin-top:10px}
+  .hero{background:linear-gradient(135deg,#fff3da,#ffe6c4);border:1px solid #f3dcae;position:relative;overflow:hidden}
+  .hero .lvlrow{display:flex;align-items:center;gap:14px}
+  .lvlbadge{width:60px;height:60px;flex:none;border-radius:18px;background:linear-gradient(135deg,var(--oro),var(--rojo));display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;box-shadow:0 6px 16px rgba(193,39,45,.3)}
+  .lvlbadge .lv{font-size:22px;font-weight:800;line-height:1}
+  .lvlbadge .lx{font-size:8px;font-weight:700;letter-spacing:1px;opacity:.85}
+  .lvlmeta{flex:1;min-width:0}
+  .lvlmeta .rank{font-size:17px;font-weight:800;display:flex;align-items:center;gap:6px}
+  .lvlmeta .xptxt{font-size:12px;color:var(--muted);font-weight:600;margin-top:2px}
+  .xpbar{height:12px;background:#f0e2c8;border-radius:999px;overflow:hidden;margin-top:9px;border:1px solid #ecd9b3}
+  .xpfill{height:100%;background:linear-gradient(90deg,var(--oro),var(--rojo));border-radius:999px;transition:width .6s cubic-bezier(.2,.8,.2,1)}
+  .stats{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .stat{background:var(--card);border-radius:16px;padding:16px;box-shadow:var(--shadow);border:1px solid var(--line);position:relative;overflow:hidden}
+  .stat .big{font-size:26px;font-weight:800;line-height:1}
+  .stat .cap{font-size:12px;color:var(--muted);font-weight:600;margin-top:5px}
+  .stat .ico{position:absolute;right:10px;top:10px;font-size:20px;opacity:.55}
+  .stat.accent{background:linear-gradient(135deg,#fff7e6,#fff)}
+  .goalcard{display:flex;align-items:center;gap:18px}
+  .ring{flex:none}
+  .goaltext .big{font-size:22px;font-weight:800}
+  .goaltext .cap{font-size:13px;color:var(--muted)}
+  .weekgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;text-align:center}
+  .wk{background:#faf3e7;border-radius:13px;padding:12px 6px}
+  .wk .n{font-size:20px;font-weight:800}
+  .wk .l{font-size:11px;color:var(--muted);font-weight:600;margin-top:3px}
+  .wk .d{font-size:11px;font-weight:700;margin-top:3px}
+  .up{color:var(--green)}.down{color:var(--rojo)}.flat{color:var(--muted)}
+  .heat{display:grid;grid-auto-flow:column;grid-template-rows:repeat(7,1fr);gap:4px;overflow-x:auto;padding-bottom:4px}
+  .hcell{width:15px;height:15px;border-radius:4px;background:#efe6d8}
+  .heat-legend{display:flex;align-items:center;gap:6px;justify-content:flex-end;margin-top:10px;font-size:11px;color:var(--muted)}
+  .heat-legend .hcell{width:12px;height:12px}
+  .badges{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+  .badge{text-align:center;opacity:.4;filter:grayscale(1);transition:.2s}
+  .badge.on{opacity:1;filter:none}
+  .badge .b-ico{width:54px;height:54px;margin:0 auto;border-radius:16px;background:#f1e8da;display:flex;align-items:center;justify-content:center;font-size:26px}
+  .badge.on .b-ico{background:linear-gradient(135deg,var(--oro-soft),#fff);box-shadow:0 4px 12px rgba(240,165,0,.25)}
+  .badge .b-name{font-size:10px;font-weight:700;margin-top:5px;line-height:1.2;color:var(--ink)}
+  .badge .b-lock{font-size:9px;color:var(--muted);margin-top:2px}
+  .records .rec{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--line)}
+  .records .rec:last-child{border:none}
+  .records .r-ico{font-size:22px}
+  .records .r-l{font-size:13px;color:var(--muted);font-weight:600;flex:1}
+  .records .r-v{font-size:16px;font-weight:800}
+  .chart-wrap{width:100%;overflow:hidden}
+  svg{display:block;width:100%;height:auto;font-family:inherit}
+  .legend{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px;font-size:12px;color:var(--muted)}
+  .legend span{display:inline-flex;align-items:center;gap:5px}
+  .dot{width:10px;height:10px;border-radius:3px;display:inline-block}
+  .seg .bar-bg{background:var(--line);border-radius:999px;height:14px;overflow:hidden;margin-top:4px}
+  .seg .bar-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--oro),var(--rojo))}
+  .seg .top{display:flex;justify-content:space-between;font-weight:600;font-size:13px}
+  .seg+.seg{margin-top:12px}
+  .quote{background:linear-gradient(135deg,var(--purple),#9b7fd4);color:#fff;border:none}
+  .quote .q-es{font-size:16px;font-weight:800;font-style:italic}
+  .quote .q-en{font-size:12px;opacity:.85;margin-top:6px}
+  .entry{background:var(--card);border:1px solid var(--line);border-radius:15px;padding:14px;margin-bottom:10px;box-shadow:var(--shadow)}
+  .entry .e-top{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+  .entry .e-date{font-weight:800;font-size:14px}
+  .entry .e-meta{font-size:12px;color:var(--muted);font-weight:600}
+  .entry .e-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+  .entry .e-tag{background:#f4ece0;color:var(--muted);font-size:11px;font-weight:700;padding:3px 9px;border-radius:999px}
+  .entry .e-note{margin-top:8px;font-size:13px;color:#5c5145;line-height:1.45}
+  .entry .e-del{background:none;border:none;color:var(--rojo);font-size:12px;font-weight:700;cursor:pointer;padding:4px;margin-top:6px}
+  .empty{text-align:center;color:var(--muted);padding:40px 20px}
+  .empty .em{font-size:46px}
+  .empty p{margin:10px 0 0;font-size:14px}
+  nav{position:fixed;bottom:0;left:0;right:0;background:rgba(255,255,255,.94);backdrop-filter:blur(10px);border-top:1px solid var(--line);display:flex;justify-content:space-around;padding:8px 8px calc(env(safe-area-inset-bottom) + 8px);z-index:50}
+  nav button{background:none;border:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;color:var(--muted);font-size:11px;font-weight:700;padding:4px 14px;border-radius:12px}
+  nav button .ni{font-size:22px;line-height:1}
+  nav button.on{color:var(--rojo)}
+  .toast{position:fixed;left:50%;bottom:96px;transform:translateX(-50%) translateY(20px);background:var(--ink);color:#fff;padding:13px 20px;border-radius:999px;font-weight:700;font-size:14px;opacity:0;pointer-events:none;transition:.3s;z-index:80;box-shadow:0 8px 24px rgba(0,0,0,.25);max-width:90vw;text-align:center}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .seg-tabs{display:flex;background:#f1e8da;border-radius:12px;padding:4px;margin-bottom:14px}
+  .seg-tabs button{flex:1;border:none;background:none;padding:9px;border-radius:9px;font-weight:700;font-size:13px;color:var(--muted);cursor:pointer}
+  .seg-tabs button.on{background:#fff;color:var(--rojo);box-shadow:0 2px 6px rgba(0,0,0,.06)}
+  details{margin-top:6px}
+  summary{cursor:pointer;font-size:13px;font-weight:700;color:var(--muted);padding:6px 0}
+  .confetti{position:fixed;top:-12px;width:10px;height:14px;z-index:90;pointer-events:none;border-radius:2px;animation:fall 2.4s linear forwards}
+  @keyframes fall{to{transform:translateY(105vh) rotate(640deg);opacity:.9}}
+  .modal{position:fixed;inset:0;background:rgba(43,33,24,.55);backdrop-filter:blur(3px);display:none;align-items:center;justify-content:center;z-index:95;padding:30px}
+  .modal.show{display:flex;animation:fade .2s}
+  .modal-card{background:#fff;border-radius:24px;padding:30px 26px;text-align:center;max-width:320px;box-shadow:0 20px 60px rgba(0,0,0,.3);animation:pop .4s cubic-bezier(.2,1.4,.4,1)}
+  @keyframes pop{from{transform:scale(.6);opacity:0}to{transform:scale(1);opacity:1}}
+  .modal-card .m-emo{font-size:60px}
+  .modal-card .m-ttl{font-size:22px;font-weight:800;margin:8px 0 4px}
+  .modal-card .m-sub{font-size:14px;color:var(--muted);margin-bottom:18px}
+  .modal-card button{width:100%;padding:14px;border:none;border-radius:14px;background:linear-gradient(135deg,var(--rojo),var(--rojo-dark));color:#fff;font-size:16px;font-weight:800;cursor:pointer}
+  /* vocabulary */
+  .vstats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;text-align:center;margin-bottom:14px}
+  .vstats .n{font-size:22px;font-weight:800}
+  .vstats .l{font-size:11px;color:var(--muted);font-weight:600;margin-top:3px}
+  .vword .e-es{font-weight:800;font-size:15px;color:var(--rojo-dark)}
+  .vword .e-ex{margin-top:6px;font-size:12px;color:var(--muted);font-style:italic}
+  .vbox{font-size:11px;font-weight:700;color:var(--oro)}
+  .vmaster{font-size:11px;font-weight:800;color:var(--green)}
+  /* flashcard review */
+  .review-card{background:#fff;border-radius:24px;padding:20px;max-width:360px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.3);animation:pop .35s cubic-bezier(.2,1.4,.4,1)}
+  .rv-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+  .rv-top span{font-weight:700;font-size:13px;color:var(--muted)}
+  .rv-top button{background:none;border:none;font-size:14px;font-weight:700;color:var(--muted);cursor:pointer}
+  .rv-flash{min-height:200px;border-radius:18px;background:linear-gradient(135deg,#fff7e6,#ffeccb);border:1.5px solid #f3dcae;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px;cursor:pointer;user-select:none}
+  .rv-flash .rv-word{font-size:30px;font-weight:800;color:var(--rojo-dark)}
+  .rv-flash .rv-mean{font-size:22px;font-weight:700;margin-top:14px;color:var(--ink);display:none}
+  .rv-flash .rv-ex{font-size:13px;font-style:italic;color:var(--muted);margin-top:10px;display:none}
+  .rv-flash .rv-hint{font-size:12px;color:var(--muted);margin-top:18px}
+  .rv-btns{display:flex;gap:10px;margin-top:16px}
+  .rv-btns button{flex:1;padding:15px;border:none;border-radius:14px;font-size:15px;font-weight:800;cursor:pointer}
+  .rv-again{background:#ffe0e0;color:var(--rojo)}
+  .rv-got{background:linear-gradient(135deg,var(--green),#2f7d57);color:#fff}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🇪🇸 ¡Mi Español!</h1>
+  <p id="greeting"></p>
+  <div class="head-row">
+    <div class="head-pill">🔥 <span id="streakHead">0</span> <span id="streakWord"></span></div>
+    <div class="head-pill"><span id="lvWord">Lv</span> <span id="lvlHead">1</span></div>
+    <div class="head-pill lang-pill"><button id="langTr" onclick="setLang('tr')">TR</button><button id="langEs" onclick="setLang('es')">ES</button></div>
+  </div>
+</header>
+
+<main>
+
+  <!-- ============ LOG ============ -->
+  <section id="view-log" class="view active">
+    <div class="card quote"><div class="q-es" id="quoteEs"></div><div class="q-en" id="quoteEn"></div></div>
+    <div class="card">
+      <h2 data-i18n="log_title"></h2>
+      <div class="field"><label data-i18n="lbl_date"></label><input type="date" id="f-date"></div>
+      <div class="field">
+        <label><span data-i18n="lbl_time"></span> <span class="hint" data-i18n="hint_min"></span></label>
+        <div class="stepper"><button type="button" onclick="bumpTime(-5)">−</button><input type="number" id="f-minutes" inputmode="numeric" value="20" min="0" step="5"><button type="button" onclick="bumpTime(5)">+</button></div>
+        <div class="quick"><button type="button" onclick="setTime(10)">10m</button><button type="button" onclick="setTime(20)">20m</button><button type="button" onclick="setTime(30)">30m</button><button type="button" onclick="setTime(45)">45m</button><button type="button" onclick="setTime(60)">1h</button></div>
+      </div>
+      <div class="field"><label data-i18n="lbl_words"></label><div class="stepper"><button type="button" onclick="bumpWords(-1)">−</button><input type="number" id="f-words" inputmode="numeric" value="0" min="0"><button type="button" onclick="bumpWords(5)">+5</button></div></div>
+      <div class="field"><label data-i18n="lbl_practice"></label><div class="chips" id="f-activities"></div></div>
+      <div class="field"><label><span data-i18n="lbl_topic"></span> <span class="hint" data-i18n="hint_opt"></span></label><input type="text" id="f-topic" data-i18n-ph="ph_topic"></div>
+      <div class="field"><label data-i18n="lbl_feel"></label><div class="scale" id="f-mood"></div></div>
+      <div class="field"><label data-i18n="lbl_diff"></label><div class="scale diff" id="f-diff"></div></div>
+      <div class="field"><label><span data-i18n="lbl_notes"></span> <span class="hint" data-i18n="hint_opt"></span></label><textarea id="f-notes" data-i18n-ph="ph_notes"></textarea></div>
+      <button class="btn-primary" data-i18n="save_btn" onclick="saveEntry()"></button>
+    </div>
+  </section>
+
+  <!-- ============ DASHBOARD ============ -->
+  <section id="view-dash" class="view">
+    <div id="backupBanner" class="card" style="display:none;background:#fff4d6;border-color:#f0d894">
+      <p id="backupText" style="margin:0 0 10px;font-size:13px;font-weight:600"></p>
+      <div style="display:flex;gap:8px">
+        <button class="btn-ghost" style="margin:0;background:var(--oro-soft);border-color:var(--oro);color:var(--rojo-dark)" id="backupNowBtn" onclick="exportData()"></button>
+        <button class="btn-ghost" style="margin:0;flex:none;width:auto;padding:13px 16px" id="backupLaterBtn" onclick="dismissBackup()"></button>
+      </div>
+    </div>
+    <div class="card hero">
+      <div class="lvlrow">
+        <div class="lvlbadge"><span class="lv" id="lvlNum">1</span><span class="lx" data-i18n="level_word"></span></div>
+        <div class="lvlmeta"><div class="rank" id="rankName"></div><div class="xptxt" id="xpTxt"></div><div class="xpbar"><div class="xpfill" id="xpFill" style="width:0%"></div></div></div>
+      </div>
+    </div>
+
+    <div class="card goalcard">
+      <div class="ring" id="goalRing"></div>
+      <div class="goaltext">
+        <div class="big" id="todayMin"></div>
+        <div class="cap" id="goalCap"></div>
+        <details><summary data-i18n="change_goal"></summary><div class="stepper" style="margin-top:8px"><button type="button" onclick="setGoal(-5)">−</button><input type="number" id="goalInput" value="30" min="5" step="5"><button type="button" onclick="setGoal(5)">+</button></div></details>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2 data-i18n="this_week"></h2>
+      <div class="weekgrid">
+        <div class="wk"><div class="n" id="wkMin">0m</div><div class="l" data-i18n="wk_studied"></div><div class="d" id="wkMinD"></div></div>
+        <div class="wk"><div class="n" id="wkDays">0/7</div><div class="l" data-i18n="wk_days"></div><div class="d" id="wkDaysD"></div></div>
+        <div class="wk"><div class="n" id="wkWords">0</div><div class="l" data-i18n="wk_words"></div><div class="d" id="wkWordsD"></div></div>
+      </div>
+    </div>
+
+    <div class="stats">
+      <div class="stat accent"><div class="ico">🔥</div><div class="big" id="s-streak">0</div><div class="cap" data-i18n="stat_streak"></div></div>
+      <div class="stat"><div class="ico">⏱️</div><div class="big" id="s-hours">0h</div><div class="cap" data-i18n="stat_time"></div></div>
+      <div class="stat"><div class="ico">📚</div><div class="big" id="s-words">0</div><div class="cap" data-i18n="stat_words"></div></div>
+      <div class="stat"><div class="ico">📅</div><div class="big" id="s-days">0</div><div class="cap" data-i18n="stat_days"></div></div>
+    </div>
+
+    <div class="card">
+      <h2><span data-i18n="cal_title"></span> <span class="sub" data-i18n="last12"></span></h2>
+      <div class="heat" id="heatmap"></div>
+      <div class="heat-legend"><span data-i18n="less"></span><span class="hcell" style="background:#efe6d8"></span><span class="hcell" style="background:#ffe0a8"></span><span class="hcell" style="background:#f5b452"></span><span class="hcell" style="background:#e07a30"></span><span class="hcell" style="background:#c1272d"></span><span data-i18n="more"></span></div>
+    </div>
+
+    <div class="card"><h2><span data-i18n="ach_title"></span> <span class="sub" id="achCount"></span></h2><div class="badges" id="badges"></div></div>
+    <div class="card"><h2 data-i18n="rec_title"></h2><div class="records" id="records"></div></div>
+
+    <div class="card">
+      <h2><span data-i18n="ct_time"></span> <span class="sub" id="rangeLbl"></span></h2>
+      <div class="seg-tabs"><button data-r="7" onclick="setRange(7)">7d</button><button data-r="14" class="on" onclick="setRange(14)">14d</button><button data-r="30" onclick="setRange(30)">30d</button></div>
+      <div class="chart-wrap" id="chartTime"></div>
+    </div>
+    <div class="card"><h2 data-i18n="ct_words"></h2><div class="chart-wrap" id="chartWords"></div></div>
+    <div class="card"><h2 data-i18n="ct_acts"></h2><div id="chartActivities"></div></div>
+    <div class="card"><h2 data-i18n="ct_mood"></h2><div class="chart-wrap" id="chartMood"></div>
+      <div class="legend"><span><i class="dot" style="background:var(--oro)"></i> <span data-i18n="leg_mood"></span></span><span><i class="dot" style="background:var(--rojo)"></i> <span data-i18n="leg_diff"></span></span></div>
+    </div>
+  </section>
+
+  <!-- ============ HISTORY ============ -->
+  <section id="view-hist" class="view">
+    <div class="card" style="padding:14px 16px"><h2 style="margin:0"><span data-i18n="hist_title"></span> <span class="sub" id="histCount"></span></h2></div>
+    <div id="histList"></div>
+  </section>
+
+  <!-- ============ VOCABULARY ============ -->
+  <section id="view-vocab" class="view">
+    <div class="card">
+      <h2 data-i18n="v_add_title"></h2>
+      <div class="field"><label data-i18n="v_es"></label><input type="text" id="v-es" data-i18n-ph="v_es_ph"></div>
+      <div class="field"><label data-i18n="v_mean"></label><input type="text" id="v-mean" data-i18n-ph="v_mean_ph"></div>
+      <div class="field"><label data-i18n="v_ex"></label><input type="text" id="v-ex" data-i18n-ph="v_ex_ph"></div>
+      <button class="btn-primary" data-i18n="v_add_btn" onclick="addWord()"></button>
+    </div>
+    <div class="card">
+      <div class="vstats">
+        <div><div class="n" id="vTotal">0</div><div class="l" data-i18n="v_total"></div></div>
+        <div><div class="n" id="vLearning">0</div><div class="l" data-i18n="v_learning"></div></div>
+        <div><div class="n" id="vMastered">0</div><div class="l" data-i18n="v_mastered"></div></div>
+      </div>
+      <button class="btn-primary" id="reviewBtn" onclick="startReview()"></button>
+    </div>
+    <div class="card">
+      <input type="text" id="v-search" data-i18n-ph="v_search_ph" oninput="renderVocab()" style="margin-bottom:12px">
+      <div id="vocabList"></div>
+    </div>
+  </section>
+
+  <!-- ============ DATA ============ -->
+  <section id="view-more" class="view">
+    <div class="card">
+      <h2 data-i18n="data_title"></h2>
+      <div class="field"><label data-i18n="lbl_name"></label><input type="text" id="f-name" data-i18n-ph="ph_name" onchange="setName(this.value)"></div>
+      <p class="hint" style="margin:0 0 14px" data-i18n="data_desc"></p>
+      <button class="btn-ghost" data-i18n="export_btn" onclick="exportData()"></button>
+      <label class="btn-ghost" style="text-align:center;cursor:pointer;display:block"><span data-i18n="import_btn"></span><input type="file" id="importFile" accept="application/json,.json" style="display:none" onchange="importData(event)"></label>
+      <button class="btn-ghost" style="color:var(--rojo)" data-i18n="erase_btn" onclick="clearAll()"></button>
+    </div>
+    <div class="card"><h2 data-i18n="app_title"></h2><p class="hint" style="margin:0;line-height:1.6" data-i18n="app_desc"></p></div>
+    <div class="card" style="text-align:center;color:var(--muted);font-size:13px" data-i18n="footer"></div>
+  </section>
+
+</main>
+
+<nav>
+  <button class="on" data-v="log" onclick="go('log')"><span class="ni">➕</span><span data-i18n="nav_log"></span></button>
+  <button data-v="dash" onclick="go('dash')"><span class="ni">📊</span><span data-i18n="nav_stats"></span></button>
+  <button data-v="vocab" onclick="go('vocab')"><span class="ni">📕</span><span data-i18n="nav_vocab"></span></button>
+  <button data-v="hist" onclick="go('hist')"><span class="ni">📖</span><span data-i18n="nav_hist"></span></button>
+  <button data-v="more" onclick="go('more')"><span class="ni">⚙️</span><span data-i18n="nav_data"></span></button>
+</nav>
+
+<div class="toast" id="toast"></div>
+<div class="modal" id="modal"><div class="modal-card"><div class="m-emo" id="mEmo">🎉</div><div class="m-ttl" id="mTtl"></div><div class="m-sub" id="mSub"></div><button id="mBtn" onclick="closeModal()"></button></div></div>
+
+<div class="modal" id="review"><div class="review-card">
+  <div class="rv-top"><span id="rvProgress"></span><button id="rvClose" onclick="closeReview()"></button></div>
+  <div class="rv-flash" id="rvFlash" onclick="revealCard()">
+    <div class="rv-word" id="rvWord"></div>
+    <div class="rv-mean" id="rvMean"></div>
+    <div class="rv-ex" id="rvEx"></div>
+    <div class="rv-hint" id="rvHint"></div>
+  </div>
+  <div class="rv-btns" id="rvBtns" style="visibility:hidden">
+    <button class="rv-again" id="rvAgain" onclick="answer(false)"></button>
+    <button class="rv-got" id="rvGot" onclick="answer(true)"></button>
+  </div>
+</div></div>
+
+<script>
+/* ============================================================
+   ¡Mi Español! — gamified bilingual (TR/ES) study tracker
+   Data is stored language-independently, so toggling language
+   never changes the underlying sessions / XP / badges.
+   ============================================================ */
+const KEY='espanol_entries_v1',GKEY='espanol_goal_v1',AKEY='espanol_ach_v1',LKEY='espanol_lang_v1',NKEY='espanol_name_v1',BKEY='espanol_backup_v1',VKEY='espanol_vocab_v1';
+
+/* activities: [stableId, emoji, es, tr] — entries store the stableId */
+const ACTIVITIES=[
+  ['vocab','🗂️','Vocabulario','Kelime bilgisi'],['grammar','✏️','Gramática','Dil bilgisi'],
+  ['listen','🎧','Escuchar','Dinleme'],['speak','🗣️','Hablar','Konuşma'],
+  ['read','📖','Leer','Okuma'],['write','✍️','Escribir','Yazma'],
+  ['app','📱','App (Duolingo…)','Uygulama (Duolingo…)'],['class','👩‍🏫','Clase','Ders'],
+  ['media','📺','Podcast/Vídeo','Podcast/Video'],['talk','💬','Conversación','Sohbet']
+];
+/* moods/diffs store numeric value (language independent) */
+const MOODS=[['😣',1,'Duro','Zor'],['😕',2,'Así así','İdare eder'],['🙂',3,'Bien','Normal'],['😄',4,'Muy bien','İyi'],['🤩',5,'¡Genial!','Harika']];
+const DIFFS=[['🟢',1,'Fácil','Kolay'],['🟡',2,'Media','Orta'],['🔴',3,'Difícil','Zor']];
+/* [spanish proverb, turkish meaning] */
+const QUOTES=[
+  ['"Poco a poco se anda lejos."','Azar azar uzağa gidilir.'],
+  ['"El que la sigue, la consigue."','Peşini bırakmayan başarır.'],
+  ['"Practicar es aprender."','Pratik yapmak öğrenmektir.'],
+  ['"Cada día un poco más."','Her gün biraz daha.'],
+  ['"Querer es poder."','İstemek başarmaktır.'],
+  ['"Hoy es un buen día para aprender."','Bugün öğrenmek için güzel bir gün.'],
+  ['"La constancia vence lo que la dicha no alcanza."','Azim, şansın ulaşamadığını başarır.']
+];
+const RANKS=[[1,'🐣','Principiante'],[3,'📖','Aprendiz'],[5,'🧭','Viajero'],[8,'💬','Conversador'],[12,'🗺️','Aventurero'],[17,'⭐','Experto'],[25,'👑','Maestro']];
+const ACHIEVEMENTS=[
+  {id:'first',e:'🌱',n:{es:'Primeros pasos',tr:'İlk adımlar'},d:{es:'Registra tu primera sesión',tr:'İlk seansını kaydet'},t:s=>s.sessions>=1},
+  {id:'goal',e:'🎯',n:{es:'Meta cumplida',tr:'Hedefe ulaştın'},d:{es:'Alcanza tu meta diaria',tr:'Günlük hedefine ulaş'},t:s=>s.goalEver},
+  {id:'streak3',e:'🔥',n:{es:'En racha',tr:'Alev aldın'},d:{es:'Racha de 3 días',tr:'3 günlük seri'},t:s=>s.bestStreak>=3},
+  {id:'streak7',e:'⚡',n:{es:'Semana completa',tr:'Hafta savaşçısı'},d:{es:'Racha de 7 días',tr:'7 günlük seri'},t:s=>s.bestStreak>=7},
+  {id:'streak30',e:'💪',n:{es:'Imparable',tr:'Durdurulamaz'},d:{es:'Racha de 30 días',tr:'30 günlük seri'},t:s=>s.bestStreak>=30},
+  {id:'w100',e:'📚',n:{es:'Palabrera',tr:'Kelime ustası'},d:{es:'100 palabras',tr:'100 kelime'},t:s=>s.totalWords>=100},
+  {id:'w500',e:'🦉',n:{es:'Maestra del léxico',tr:'Kelime hazinesi'},d:{es:'500 palabras',tr:'500 kelime'},t:s=>s.totalWords>=500},
+  {id:'w1000',e:'🧠',n:{es:'Ratón de biblioteca',tr:'Kitap kurdu'},d:{es:'1000 palabras',tr:'1000 kelime'},t:s=>s.totalWords>=1000},
+  {id:'h10',e:'⏰',n:{es:'Dedicada',tr:'Azimli'},d:{es:'10 horas en total',tr:'Toplam 10 saat'},t:s=>s.totalMin>=600},
+  {id:'h50',e:'🌟',n:{es:'Comprometida',tr:'Kararlı'},d:{es:'50 horas en total',tr:'Toplam 50 saat'},t:s=>s.totalMin>=3000},
+  {id:'h100',e:'🎓',n:{es:'Erudita',tr:'Bilgin'},d:{es:'100 horas en total',tr:'Toplam 100 saat'},t:s=>s.totalMin>=6000},
+  {id:'round',e:'🌈',n:{es:'Versátil',tr:'Çok yönlü'},d:{es:'Prueba 5+ actividades',tr:'5+ etkinlik dene'},t:s=>s.actTypes>=5},
+  {id:'early',e:'🌅',n:{es:'Madrugadora',tr:'Erkenci'},d:{es:'Estudia antes de las 9',tr:'Sabah 9’dan önce çalış'},t:s=>s.early},
+  {id:'night',e:'🌙',n:{es:'Búho nocturno',tr:'Gece kuşu'},d:{es:'Estudia tras las 21',tr:'Akşam 21’den sonra çalış'},t:s=>s.night},
+  {id:'perfect',e:'📅',n:{es:'Semana perfecta',tr:'Mükemmel hafta'},d:{es:'7 días seguidos',tr:'Üst üste 7 gün'},t:s=>s.bestStreak>=7},
+  {id:'s50',e:'🏅',n:{es:'Medio centenar',tr:'Yarım asır'},d:{es:'50 sesiones',tr:'50 seans'},t:s=>s.sessions>=50},
+];
+
+const DICT={
+  es:{
+    greet_m:'¡Buenos días, {name}! ¿Lista para estudiar?',greet_a:'¡Buenas tardes, {name}! Hora de practicar',greet_e:'¡Buenas noches, {name}! ¿Un poco de español?',
+    lbl_name:'Tu nombre',ph_name:'Tu nombre…',name_saved:'¡Nombre guardado! 👋',
+    streak:'días de racha',lv:'Nv',
+    nav_log:'Añadir',nav_stats:'Stats',nav_hist:'Historial',nav_data:'Datos',
+    log_title:'📝 Registrar una sesión',lbl_date:'Fecha',lbl_time:'Tiempo de estudio',hint_min:'(minutos)',
+    lbl_words:'Palabras / frases nuevas',lbl_practice:'¿Qué practicaste?',lbl_topic:'Tema',hint_opt:'(opcional)',
+    ph_topic:'p. ej. Pretérito, vocabulario de comida…',lbl_feel:'¿Cómo te sentiste?',lbl_diff:'Dificultad',
+    lbl_notes:'Notas',ph_notes:'Algo para recordar…',save_btn:'¡Guardar sesión!',
+    level_word:'NIVEL',xp_total:'total',studied_today:'estudiado hoy · meta',min_suffix:' min',min_word:'min',
+    change_goal:'Cambiar meta diaria',this_week:'📆 Esta semana',wk_studied:'estudiado',wk_days:'días',wk_words:'palabras',same:'igual',
+    stat_streak:'Racha de días',stat_time:'Tiempo total',stat_words:'Palabras aprendidas',stat_days:'Días estudiados',
+    cal_title:'🗓️ Calendario de estudio',last12:'últimas 12 semanas',less:'Menos',more:'Más',
+    ach_title:'🏅 Logros',rec_title:'🏆 Récords personales',
+    rec_streak:'Racha más larga',rec_bestday:'Mejor día de estudio',rec_words:'Más palabras en un día',rec_avg:'Media por día',rec_sessions:'Sesiones totales',
+    unit_days:'días',unit_min:'min',unit_words:'palabras',
+    ct_time:'⏱️ Tiempo de estudio',range:'últimos {n} días',ct_words:'📚 Palabras nuevas por día',ct_acts:'🎯 Lo que más practicas',ct_mood:'😊 Ánimo y dificultad',
+    leg_mood:'Ánimo (más alto = mejor)',leg_diff:'Dificultad (más alto = más difícil)',goal_word:'meta',
+    nodata:'Sin datos aún — ¡registra una sesión!',nomood:'Sin datos de ánimo aún',empty_acts:'Registra algunas sesiones para ver lo que más practicas.',
+    hist_title:'📖 Historial',sessions_word:'sesiones',empty_hist:'Aún no hay sesiones.<br>¡Toca <b>Añadir</b> para empezar!',delete:'Eliminar',
+    data_title:'💾 Tus datos',data_desc:'Todo se guarda de forma privada solo en este dispositivo. Haz una copia de seguridad de vez en cuando para no perder tu progreso.',
+    export_btn:'⬇️ Exportar copia (.json)',import_btn:'⬆️ Importar copia',erase_btn:'🗑️ Borrar todos los datos',
+    app_title:'📲 Conviértela en app',app_desc:'<b>iPhone:</b> toca <b>Compartir</b> → <b>Añadir a inicio</b>.<br><b>Android:</b> menú <b>⋮</b> → <b>Añadir a pantalla de inicio</b>.<br>Se abre en pantalla completa como una app de verdad — y funciona sin internet. 🎉',
+    footer:'Hecho con ❤️ · ¡Buena suerte con tu español!',
+    saved_xp:'¡Guardado! +{n} XP 🎉',add_first:'Añade tiempo o palabras primero 🙂',deleted:'Eliminado',backup_dl:'Copia descargada ⬇️',
+    imported:'Importadas {n} sesiones ✅',read_fail:'No se pudo leer el archivo 😕',erased:'Todos los datos borrados',
+    c_delete:'¿Eliminar esta sesión?',c_import:'¿Importar {n} sesiones? Esto reemplaza los datos actuales.',
+    c_erase1:'¿Borrar TODOS los datos permanentemente? Exporta una copia si no estás segura.',c_erase2:'¿Borrar todo de verdad?',
+    levelup_t:'¡{name}, subiste de nivel!',level_n:'Nivel',ach_unlocked:'¡Logro desbloqueado!',modal_btn:'¡Genial!',
+    backup_remind:'¡{name}, haz una copia de seguridad! Mantén tu progreso a salvo.',backup_now:'Copia ahora',later:'Luego',
+    nav_vocab:'Palabras',v_add_title:'➕ Añadir palabra',v_es:'Palabra en español',v_es_ph:'p. ej. la manzana',
+    v_mean:'Significado',v_mean_ph:'p. ej. elma / apple',v_ex:'Ejemplo (opcional)',v_ex_ph:'Una frase de ejemplo…',
+    v_add_btn:'Añadir palabra',v_added:'¡Palabra añadida! 📕',v_need_es:'Escribe una palabra primero 🙂',
+    v_total:'palabras',v_learning:'aprendiendo',v_mastered:'dominadas',v_search_ph:'Buscar palabra…',
+    v_review:'🎴 Repasar',v_review_n:'🎴 Repasar ({n})',v_empty:'Aún no hay palabras.<br>¡Añade la primera arriba!',
+    v_no_words:'Añade algunas palabras para repasar 🙂',v_tap:'Toca para ver el significado',
+    v_again:'🔁 Otra vez',v_got:'✅ Lo sé',v_close:'Cerrar',v_done:'¡Repaso terminado!',v_reviewed:'repasadas',
+    v_master_tag:'✓ dominada',c_vdelete:'¿Eliminar esta palabra?'
+  },
+  tr:{
+    greet_m:'Günaydın {name}! Çalışmaya hazır mısın?',greet_a:'İyi günler {name}! Pratik zamanı',greet_e:'İyi akşamlar {name}! Biraz İspanyolca?',
+    lbl_name:'Adın',ph_name:'Adın…',name_saved:'Ad kaydedildi! 👋',
+    streak:'günlük seri',lv:'Sv',
+    nav_log:'Ekle',nav_stats:'İstatistik',nav_hist:'Geçmiş',nav_data:'Veri',
+    log_title:'📝 Seans kaydet',lbl_date:'Tarih',lbl_time:'Çalışma süresi',hint_min:'(dakika)',
+    lbl_words:'Yeni kelime / ifade',lbl_practice:'Ne çalıştın?',lbl_topic:'Konu',hint_opt:'(isteğe bağlı)',
+    ph_topic:'ör. Geçmiş zaman, yemek kelimeleri…',lbl_feel:'Nasıl geçti?',lbl_diff:'Zorluk',
+    lbl_notes:'Notlar',ph_notes:'Hatırlamak istediğin bir şey…',save_btn:'Seansı kaydet!',
+    level_word:'SEVİYE',xp_total:'toplam',studied_today:'bugün çalışıldı · hedef',min_suffix:' dk',min_word:'dk',
+    change_goal:'Günlük hedefi değiştir',this_week:'📆 Bu hafta',wk_studied:'çalışma',wk_days:'gün',wk_words:'kelime',same:'aynı',
+    stat_streak:'Günlük seri',stat_time:'Toplam süre',stat_words:'Öğrenilen kelime',stat_days:'Çalışılan gün',
+    cal_title:'🗓️ Çalışma takvimi',last12:'son 12 hafta',less:'Az',more:'Çok',
+    ach_title:'🏅 Başarımlar',rec_title:'🏆 Kişisel rekorlar',
+    rec_streak:'En uzun seri',rec_bestday:'En iyi çalışma günü',rec_words:'Bir günde en çok kelime',rec_avg:'Günlük ortalama',rec_sessions:'Toplam seans',
+    unit_days:'gün',unit_min:'dk',unit_words:'kelime',
+    ct_time:'⏱️ Çalışma süresi',range:'son {n} gün',ct_words:'📚 Günlük yeni kelime',ct_acts:'🎯 En çok ne çalışıyorsun',ct_mood:'😊 Ruh hali ve zorluk',
+    leg_mood:'Ruh hali (yüksek = iyi)',leg_diff:'Zorluk (yüksek = zor)',goal_word:'hedef',
+    nodata:'Henüz veri yok — bir seans ekle!',nomood:'Henüz ruh hali verisi yok',empty_acts:'En çok ne çalıştığını görmek için birkaç seans ekle.',
+    hist_title:'📖 Geçmiş',sessions_word:'seans',empty_hist:'Henüz seans yok.<br>Başlamak için <b>Ekle</b>’ye dokun!',delete:'Sil',
+    data_title:'💾 Verilerin',data_desc:'Her şey yalnızca bu cihazda gizli olarak saklanır. İlerlemeni kaybetmemek için ara sıra yedek al.',
+    export_btn:'⬇️ Yedek dışa aktar (.json)',import_btn:'⬆️ Yedek içe aktar',erase_btn:'🗑️ Tüm verileri sil',
+    app_title:'📲 Uygulamaya dönüştür',app_desc:'<b>iPhone:</b> <b>Paylaş</b> → <b>Ana Ekrana Ekle</b>.<br><b>Android:</b> <b>⋮</b> menüsü → <b>Ana ekrana ekle</b>.<br>Gerçek bir uygulama gibi tam ekran açılır — ve internetsiz çalışır. 🎉',
+    footer:'❤️ ile yapıldı · İspanyolcanda bol şans!',
+    saved_xp:'Kaydedildi! +{n} XP 🎉',add_first:'Önce süre veya kelime ekle 🙂',deleted:'Silindi',backup_dl:'Yedek indirildi ⬇️',
+    imported:'{n} seans içe aktarıldı ✅',read_fail:'Dosya okunamadı 😕',erased:'Tüm veriler silindi',
+    c_delete:'Bu seans silinsin mi?',c_import:'{n} seans içe aktarılsın mı? Mevcut veriler değiştirilecek.',
+    c_erase1:'TÜM veriler kalıcı olarak silinsin mi? Emin değilsen önce yedek al.',c_erase2:'Gerçekten her şey silinsin mi?',
+    levelup_t:'{name}, seviye atladın!',level_n:'Seviye',ach_unlocked:'Başarım açıldı!',modal_btn:'Harika!',
+    backup_remind:'{name}, yedek almayı unutma! İlerlemeni güvende tut.',backup_now:'Şimdi yedekle',later:'Sonra',
+    nav_vocab:'Kelimeler',v_add_title:'➕ Kelime ekle',v_es:'İspanyolca kelime',v_es_ph:'ör. la manzana',
+    v_mean:'Anlamı',v_mean_ph:'ör. elma',v_ex:'Örnek cümle (isteğe bağlı)',v_ex_ph:'Örnek bir cümle…',
+    v_add_btn:'Kelime ekle',v_added:'Kelime eklendi! 📕',v_need_es:'Önce bir kelime yaz 🙂',
+    v_total:'kelime',v_learning:'öğreniliyor',v_mastered:'öğrenildi',v_search_ph:'Kelime ara…',
+    v_review:'🎴 Tekrar et',v_review_n:'🎴 Tekrar et ({n})',v_empty:'Henüz kelime yok.<br>Yukarıdan ilkini ekle!',
+    v_no_words:'Tekrar için birkaç kelime ekle 🙂',v_tap:'Anlamı görmek için dokun',
+    v_again:'🔁 Tekrar',v_got:'✅ Biliyorum',v_close:'Kapat',v_done:'Tekrar bitti!',v_reviewed:'kelime tekrar edildi',
+    v_master_tag:'✓ öğrenildi',c_vdelete:'Bu kelime silinsin mi?'
+  }
+};
+
+let state=load(),goal=parseInt(localStorage.getItem(GKEY)||'30',10);
+let unlocked=loadAch();
+let lang=localStorage.getItem(LKEY)||'tr';
+let userName=localStorage.getItem(NKEY)||'Gülçin';
+let vocab=loadVocab();
+let sel={activities:new Set(),mood:0,diff:0},range=14,booted=false,quoteIdx=Math.floor(Math.random()*QUOTES.length);
+
+function load(){try{return JSON.parse(localStorage.getItem(KEY))||[]}catch(e){return[]}}
+function save(){localStorage.setItem(KEY,JSON.stringify(state))}
+function loadAch(){try{return new Set(JSON.parse(localStorage.getItem(AKEY))||[])}catch(e){return new Set()}}
+function saveAch(){localStorage.setItem(AKEY,JSON.stringify([...unlocked]))}
+function loadVocab(){try{return JSON.parse(localStorage.getItem(VKEY))||[]}catch(e){return[]}}
+function saveVocab(){localStorage.setItem(VKEY,JSON.stringify(vocab))}
+function fmt(x){return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0')}
+function todayStr(){return fmt(new Date())}
+function t(k){return (DICT[lang][k]!=null?DICT[lang][k]:k)}
+function actLabel(id){const a=ACTIVITIES.find(x=>x[0]===id);return a?a[lang==='tr'?3:2]:id}
+function actEmoji(id){const a=ACTIVITIES.find(x=>x[0]===id);return a?a[1]:'•'}
+
+/* ---------- language ---------- */
+function setLang(l){lang=l;localStorage.setItem(LKEY,l);applyLang();render()}
+function applyLang(){
+  document.documentElement.lang=lang;
+  document.querySelectorAll('[data-i18n]').forEach(el=>el.innerHTML=t(el.getAttribute('data-i18n')));
+  document.querySelectorAll('[data-i18n-ph]').forEach(el=>el.placeholder=t(el.getAttribute('data-i18n-ph')));
+  document.getElementById('langTr').classList.toggle('on',lang==='tr');
+  document.getElementById('langEs').classList.toggle('on',lang==='es');
+  document.getElementById('lvWord').textContent=t('lv');
+  document.getElementById('mBtn').textContent=t('modal_btn');
+  relabelForm();setQuote();
+}
+
+/* ---------- form ---------- */
+function buildForm(){
+  const ac=document.getElementById('f-activities');ac.innerHTML='';
+  ACTIVITIES.forEach(([id,emo])=>{const c=document.createElement('div');c.className='chip';c.dataset.id=id;c.textContent=emo+' '+actLabel(id);
+    c.onclick=()=>{c.classList.toggle('on');c.classList.contains('on')?sel.activities.add(id):sel.activities.delete(id)};ac.appendChild(c)});
+  const mo=document.getElementById('f-mood');mo.innerHTML='';
+  MOODS.forEach(([emo,val])=>{const b=document.createElement('button');b.type='button';b.dataset.val=val;b.innerHTML=emo+'<span class="lbl"></span>';
+    b.onclick=()=>{sel.mood=val;[...mo.children].forEach(x=>x.classList.remove('on'));b.classList.add('on')};mo.appendChild(b)});
+  const df=document.getElementById('f-diff');df.innerHTML='';
+  DIFFS.forEach(([emo,val])=>{const b=document.createElement('button');b.type='button';b.dataset.val=val;b.innerHTML=emo+'<span class="lbl"></span>';
+    b.onclick=()=>{sel.diff=val;[...df.children].forEach(x=>x.classList.remove('on'));b.classList.add('on')};df.appendChild(b)});
+  document.getElementById('f-date').value=todayStr();
+  relabelForm();
+}
+function relabelForm(){
+  document.querySelectorAll('#f-activities .chip').forEach(c=>{const on=c.classList.contains('on');c.textContent=actEmoji(c.dataset.id)+' '+actLabel(c.dataset.id);c.classList.toggle('on',on)});
+  document.querySelectorAll('#f-mood button').forEach(b=>{const m=MOODS.find(x=>x[1]==b.dataset.val);b.querySelector('.lbl').textContent=m?m[lang==='tr'?3:2]:''});
+  document.querySelectorAll('#f-diff button').forEach(b=>{const d=DIFFS.find(x=>x[1]==b.dataset.val);b.querySelector('.lbl').textContent=d?d[lang==='tr'?3:2]:''});
+}
+function setQuote(){const q=QUOTES[quoteIdx];document.getElementById('quoteEs').textContent=q[0];
+  const sub=document.getElementById('quoteEn');if(lang==='tr'){sub.textContent=q[1];sub.style.display='block'}else{sub.style.display='none'}}
+function bumpTime(d){const i=document.getElementById('f-minutes');i.value=Math.max(0,(parseInt(i.value)||0)+d)}
+function setTime(v){document.getElementById('f-minutes').value=v}
+function bumpWords(d){const i=document.getElementById('f-words');i.value=Math.max(0,(parseInt(i.value)||0)+d)}
+
+function saveEntry(){
+  const minutes=parseInt(document.getElementById('f-minutes').value)||0;
+  const words=parseInt(document.getElementById('f-words').value)||0;
+  const date=document.getElementById('f-date').value||todayStr();
+  if(minutes<=0&&words<=0&&sel.activities.size===0){toast(t('add_first'));return}
+  const prevLvl=levelInfo(totalXP()).lvl;
+  state.push({id:Date.now(),date,minutes,words,activities:[...sel.activities],topic:document.getElementById('f-topic').value.trim(),notes:document.getElementById('f-notes').value.trim(),mood:sel.mood,diff:sel.diff});
+  save();resetForm();
+  const gained=minutes+words*2,newLvl=levelInfo(totalXP()).lvl;
+  confetti();render();
+  if(newLvl>prevLvl){const r=getRank(newLvl);showModal('🎉',t('levelup_t').replace('{name}',userName),t('level_n')+' '+newLvl+' · '+r[1]+' '+r[2])}
+  else toast(t('saved_xp').replace('{n}',gained));
+  go('dash');
+}
+function resetForm(){setTime(20);document.getElementById('f-words').value=0;document.getElementById('f-topic').value='';document.getElementById('f-notes').value='';
+  sel={activities:new Set(),mood:0,diff:0};
+  document.querySelectorAll('#f-activities .chip').forEach(c=>c.classList.remove('on'));
+  document.querySelectorAll('#f-mood button,#f-diff button').forEach(b=>b.classList.remove('on'));
+  quoteIdx=Math.floor(Math.random()*QUOTES.length);setQuote();
+  document.getElementById('f-date').value=todayStr();}
+
+function go(v){document.querySelectorAll('.view').forEach(s=>s.classList.remove('active'));document.getElementById('view-'+v).classList.add('active');
+  document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));window.scrollTo({top:0,behavior:'smooth'})}
+function setGoal(d){goal=Math.max(5,goal+d);document.getElementById('goalInput').value=goal;localStorage.setItem(GKEY,goal);render()}
+function setName(v){userName=(v||'').trim()||'Gülçin';localStorage.setItem(NKEY,userName);document.getElementById('f-name').value=userName;applyPersonalization();render();toast(t('name_saved'))}
+function applyPersonalization(){
+  document.title=userName+' · ¡Mi Español!';
+  const m=document.querySelector('meta[name="apple-mobile-web-app-title"]');if(m)m.content=userName;
+  document.querySelector('header h1').innerHTML='🇪🇸 ¡Mi Español!';
+}
+let backupSnoozed=false;
+function renderBackupBanner(){
+  const banner=document.getElementById('backupBanner');
+  const since=state.length-(parseInt(localStorage.getItem(BKEY))||0);
+  const overdue=!backupSnoozed && state.length>=8 && since>=10;
+  banner.style.display=overdue?'block':'none';
+  if(overdue){
+    document.getElementById('backupText').textContent=t('backup_remind').replace('{name}',userName);
+    document.getElementById('backupNowBtn').textContent='⬇️ '+t('backup_now');
+    document.getElementById('backupLaterBtn').textContent=t('later');
+  }
+}
+function dismissBackup(){backupSnoozed=true;document.getElementById('backupBanner').style.display='none'}
+document.addEventListener('input',e=>{if(e.target.id==='goalInput'){goal=Math.max(5,parseInt(e.target.value)||5);localStorage.setItem(GKEY,goal);render()}});
+
+/* ---------- XP / levels ---------- */
+function totalXP(){return state.reduce((a,e)=>a+e.minutes+e.words*2,0)}
+function levelInfo(xp){let lvl=1,acc=0,need=100;while(xp>=acc+need){acc+=need;lvl++;need=100+(lvl-1)*50}return{lvl,into:xp-acc,need,pct:(xp-acc)/need}}
+function getRank(lvl){let r=RANKS[0];for(const x of RANKS)if(lvl>=x[0])r=x;return r}
+
+/* ---------- aggregation ---------- */
+function byDay(){const m={};state.forEach(e=>{if(!m[e.date])m[e.date]={minutes:0,words:0,moods:[],diffs:[]};m[e.date].minutes+=e.minutes;m[e.date].words+=e.words;if(e.mood)m[e.date].moods.push(e.mood);if(e.diff)m[e.date].diffs.push(e.diff)});return m}
+function lastNDates(n){const arr=[],d=new Date();for(let i=n-1;i>=0;i--){const x=new Date(d);x.setDate(d.getDate()-i);arr.push(fmt(x))}return arr}
+function streakBack(days,start){let s=0,cur=new Date(start);while(days[fmt(cur)]&&days[fmt(cur)].minutes>0){s++;cur.setDate(cur.getDate()-1)}return s}
+function calcStreak(){const days=byDay();let cur=new Date();if(!days[fmt(cur)]||days[fmt(cur)].minutes<=0)cur.setDate(cur.getDate()-1);return streakBack(days,cur)}
+function streakFwd(days,d){let s=0,cur=new Date(d+'T00:00');while(days[fmt(cur)]&&days[fmt(cur)].minutes>0){s++;cur.setDate(cur.getDate()+1)}return s}
+function bestStreak(){const days=byDay(),ds=Object.keys(days).filter(d=>days[d].minutes>0).sort();let best=0;
+  ds.forEach(d=>{const p=new Date(d+'T00:00');p.setDate(p.getDate()-1);if(!days[fmt(p)]||days[fmt(p)].minutes<=0)best=Math.max(best,streakFwd(days,d))});return best}
+function statBundle(){const days=byDay();const totalMin=state.reduce((a,e)=>a+e.minutes,0),totalWords=state.reduce((a,e)=>a+e.words,0);
+  const acts=new Set();state.forEach(e=>e.activities.forEach(a=>acts.add(a)));let early=false,night=false;state.forEach(e=>{const h=new Date(e.id).getHours();if(h<9)early=true;if(h>=21)night=true});
+  const goalEver=Object.values(days).some(d=>d.minutes>=goal);
+  return{sessions:state.length,totalMin,totalWords,actTypes:acts.size,early,night,goalEver,bestStreak:bestStreak(),daysStudied:Object.keys(days).length}}
+
+/* ---------- render ---------- */
+function setRange(n){range=n;document.querySelectorAll('.seg-tabs button').forEach(b=>b.classList.toggle('on',+b.dataset.r===n));document.getElementById('rangeLbl').textContent=t('range').replace('{n}',n);renderCharts()}
+
+function render(){
+  const days=byDay(),streak=calcStreak(),sb=statBundle();
+  const xp=totalXP(),li=levelInfo(xp),r=getRank(li.lvl);
+  document.getElementById('streakHead').textContent=streak;
+  document.getElementById('streakWord').textContent=t('streak');
+  document.getElementById('lvlHead').textContent=li.lvl;
+  document.getElementById('lvlNum').textContent=li.lvl;
+  document.getElementById('rankName').textContent=r[1]+' '+r[2];
+  document.getElementById('xpTxt').textContent=li.into+' / '+li.need+' XP · '+xp+' '+t('xp_total');
+  document.getElementById('xpFill').style.width=Math.round(li.pct*100)+'%';
+  document.getElementById('s-streak').textContent=streak;
+  document.getElementById('s-hours').textContent=sb.totalMin>=60?(sb.totalMin/60).toFixed(1)+'h':sb.totalMin+'m';
+  document.getElementById('s-words').textContent=sb.totalWords;
+  document.getElementById('s-days').textContent=sb.daysStudied;
+  const tMin=(days[todayStr()]?.minutes)||0;
+  document.getElementById('todayMin').textContent=tMin+t('min_suffix');
+  document.getElementById('goalCap').innerHTML=t('studied_today')+' <b>'+goal+'</b>'+t('min_suffix');
+  document.getElementById('goalInput').value=goal;
+  drawRing(tMin);
+  const h=new Date().getHours();
+  document.getElementById('greeting').textContent=(h<12?t('greet_m'):h<19?t('greet_a'):t('greet_e')).replace('{name}',userName);
+  document.getElementById('rangeLbl').textContent=t('range').replace('{n}',range);
+  renderWeek(days);renderHeatmap(days);renderAch(sb);renderRecords(days,sb);renderCharts();renderHistory();renderVocab();renderBackupBanner();syncAch(sb);
+}
+function drawRing(min){const pct=Math.min(1,goal>0?min/goal:0),r=34,c=2*Math.PI*r,off=c*(1-pct),done=pct>=1;
+  document.getElementById('goalRing').innerHTML=`<svg viewBox="0 0 84 84" width="84" height="84"><circle cx="42" cy="42" r="${r}" fill="none" stroke="var(--line)" stroke-width="9"/><circle cx="42" cy="42" r="${r}" fill="none" stroke="${done?'var(--green)':'var(--oro)'}" stroke-width="9" stroke-linecap="round" stroke-dasharray="${c}" stroke-dashoffset="${off}" transform="rotate(-90 42 42)"/><text x="42" y="46" text-anchor="middle" font-size="17" font-weight="800" fill="var(--ink)">${Math.round(pct*100)}%</text></svg>`}
+function renderWeek(days){const cur=lastNDates(7),prev=lastNDates(14).slice(0,7),sum=(a,k)=>a.reduce((s,d)=>s+(days[d]?days[d][k]:0),0),dc=a=>a.filter(d=>days[d]&&days[d].minutes>0).length;
+  const cm=sum(cur,'minutes'),pm=sum(prev,'minutes'),cw=sum(cur,'words'),pw=sum(prev,'words'),cd=dc(cur),pd=dc(prev);
+  document.getElementById('wkMin').textContent=cm>=60?(cm/60).toFixed(1)+'h':cm+'m';
+  document.getElementById('wkDays').textContent=cd+'/7';document.getElementById('wkWords').textContent=cw;
+  document.getElementById('wkMinD').innerHTML=delta(cm,pm);document.getElementById('wkDaysD').innerHTML=delta(cd,pd);document.getElementById('wkWordsD').innerHTML=delta(cw,pw)}
+function delta(now,prev){const d=now-prev;if(d>0)return '<span class="up">▲ '+d+'</span>';if(d<0)return '<span class="down">▼ '+Math.abs(d)+'</span>';return '<span class="flat">— '+t('same')+'</span>'}
+function heatColor(m){if(m<=0)return'#efe6d8';if(m<15)return'#ffe0a8';if(m<30)return'#f5b452';if(m<60)return'#e07a30';return'#c1272d'}
+function renderHeatmap(days){const el=document.getElementById('heatmap'),today=new Date(),end=new Date(today);end.setDate(end.getDate()+(6-end.getDay()));
+  const cells=[],start=new Date(end);start.setDate(end.getDate()-83);
+  for(let d=new Date(start);d<=end;d.setDate(d.getDate()+1)){const k=fmt(d),m=days[k]?days[k].minutes:0,future=d>today;cells.push(`<div class="hcell" title="${k}: ${m}m" style="background:${future?'transparent':heatColor(m)}"></div>`)}
+  el.innerHTML=cells.join('')}
+function renderAch(sb){let count=0;document.getElementById('badges').innerHTML=ACHIEVEMENTS.map(a=>{const on=a.t(sb);if(on)count++;
+  return `<div class="badge ${on?'on':''}"><div class="b-ico">${a.e}</div><div class="b-name">${a.n[lang]}</div><div class="b-lock">${on?'✓':a.d[lang]}</div></div>`}).join('');
+  document.getElementById('achCount').textContent=count+'/'+ACHIEVEMENTS.length}
+function syncAch(sb){const now=new Set(ACHIEVEMENTS.filter(a=>a.t(sb)).map(a=>a.id));
+  if(booted){const fresh=[...now].filter(id=>!unlocked.has(id));if(fresh.length){const a=ACHIEVEMENTS.find(x=>x.id===fresh[0]);confetti();setTimeout(()=>showModal(a.e,t('ach_unlocked'),a.n[lang]+' — '+a.d[lang]),400)}}
+  unlocked=now;saveAch()}
+function renderRecords(days,sb){const da=Object.entries(days);
+  const bestDay=da.reduce((b,[d,v])=>v.minutes>b.m?{d,m:v.minutes}:b,{m:0});
+  const bestW=da.reduce((b,[d,v])=>v.words>b.w?{d,w:v.words}:b,{w:0});
+  const avg=sb.daysStudied?Math.round(sb.totalMin/sb.daysStudied):0;
+  const recs=[['🔥',t('rec_streak'),sb.bestStreak+' '+t('unit_days')],['⏱️',t('rec_bestday'),bestDay.m+' '+t('unit_min')],['📚',t('rec_words'),bestW.w+' '+t('unit_words')],['📊',t('rec_avg'),avg+' '+t('unit_min')],['✅',t('rec_sessions'),sb.sessions]];
+  document.getElementById('records').innerHTML=recs.map(([i,l,v])=>`<div class="rec"><span class="r-ico">${i}</span><span class="r-l">${l}</span><span class="r-v">${v}</span></div>`).join('')}
+function renderCharts(){const days=byDay(),dates=lastNDates(range);
+  barChart('chartTime',dates,dates.map(d=>days[d]?days[d].minutes:0),'var(--oro)','var(--rojo)',goal);
+  barChart('chartWords',dates,dates.map(d=>days[d]?days[d].words:0),'#6fb98f','var(--green)',null);
+  const counts={};state.forEach(e=>e.activities.forEach(a=>counts[a]=(counts[a]||0)+1));
+  const arr=Object.entries(counts).sort((a,b)=>b[1]-a[1]),max=arr.length?arr[0][1]:1,ac=document.getElementById('chartActivities');
+  if(!arr.length)ac.innerHTML=`<div class="empty"><div class="em">🎯</div><p>${t('empty_acts')}</p></div>`;
+  else ac.innerHTML=arr.map(([id,n])=>`<div class="seg"><div class="top"><span>${actEmoji(id)} ${actLabel(id)}</span><span>${n}×</span></div><div class="bar-bg"><div class="bar-fill" style="width:${Math.round(n/max*100)}%"></div></div></div>`).join('');
+  moodChart('chartMood',dates,days)}
+function barChart(elId,dates,vals,c1,c2,goalLine){const el=document.getElementById(elId),W=520,H=170,padB=22,padT=14,padL=6,padR=6,n=vals.length,max=Math.max(...vals,goalLine||0,1),bw=(W-padL-padR)/n,hasData=vals.some(v=>v>0);
+  let bars='';vals.forEach((v,i)=>{const bh=(H-padB-padT)*(v/max),x=padL+i*bw+bw*0.16,y=H-padB-bh,w=bw*0.68,today=i===n-1;
+    bars+=`<rect x="${x}" y="${y}" width="${w}" height="${Math.max(bh,v>0?2:0)}" rx="3" fill="url(#g_${elId})" opacity="${today?1:.92}"/>`;if(v>0&&n<=14)bars+=`<text x="${x+w/2}" y="${y-4}" text-anchor="middle" font-size="9" font-weight="700" fill="var(--muted)">${v}</text>`});
+  let labels='';const step=n>20?5:n>10?2:1;dates.forEach((d,i)=>{if(i%step===0||i===n-1)labels+=`<text x="${padL+i*bw+bw/2}" y="${H-7}" text-anchor="middle" font-size="9" fill="var(--muted)">${+d.slice(8)}</text>`});
+  let gl='';if(goalLine){const gy=H-padB-(H-padB-padT)*(goalLine/max);gl=`<line x1="${padL}" y1="${gy}" x2="${W-padR}" y2="${gy}" stroke="var(--rojo)" stroke-width="1.2" stroke-dasharray="4 4" opacity=".55"/><text x="${W-padR}" y="${gy-4}" text-anchor="end" font-size="9" fill="var(--rojo)" font-weight="700">${t('goal_word')}</text>`}
+  el.innerHTML=`<svg viewBox="0 0 ${W} ${H}"><defs><linearGradient id="g_${elId}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${c1}"/><stop offset="1" stop-color="${c2}"/></linearGradient></defs>${gl}${bars}${labels}${hasData?'':`<text x="${W/2}" y="${H/2}" text-anchor="middle" font-size="13" fill="var(--muted)">${t('nodata')}</text>`}</svg>`}
+function moodChart(elId,dates,days){const el=document.getElementById(elId),W=520,H=150,padB=20,padT=12,padL=8,padR=8;
+  const pts=dates.map(d=>{const dd=days[d];return{mood:dd&&dd.moods.length?dd.moods.reduce((a,b)=>a+b,0)/dd.moods.length:null,diff:dd&&dd.diffs.length?dd.diffs.reduce((a,b)=>a+b,0)/dd.diffs.length:null}});
+  const n=dates.length,xOf=i=>padL+(W-padL-padR)*(n<=1?0.5:i/(n-1)),yMood=v=>H-padB-(H-padB-padT)*((v-1)/4),yDiff=v=>H-padB-(H-padB-padT)*((v-1)/2);
+  function line(key,yf,color){let dStr='',dots='',started=false;pts.forEach((p,i)=>{const v=p[key];if(v==null)return;const x=xOf(i),y=yf(v);dStr+=(started?'L':'M')+x+' '+y+' ';started=true;dots+=`<circle cx="${x}" cy="${y}" r="3" fill="${color}"/>`});return dStr?`<path d="${dStr}" fill="none" stroke="${color}" stroke-width="2.2" stroke-linejoin="round"/>${dots}`:''}
+  const any=pts.some(p=>p.mood!=null||p.diff!=null);
+  el.innerHTML=`<svg viewBox="0 0 ${W} ${H}">${line('mood',yMood,'var(--oro)')}${line('diff',yDiff,'var(--rojo)')}${any?'':`<text x="${W/2}" y="${H/2}" text-anchor="middle" font-size="13" fill="var(--muted)">${t('nomood')}</text>`}</svg>`}
+function renderHistory(){const list=document.getElementById('histList'),sorted=[...state].sort((a,b)=>b.date.localeCompare(a.date)||b.id-a.id),loc=lang==='tr'?'tr-TR':'es-ES';
+  document.getElementById('histCount').textContent=sorted.length?sorted.length+' '+t('sessions_word'):'';
+  if(!sorted.length){list.innerHTML=`<div class="empty"><div class="em">📖</div><p>${t('empty_hist')}</p></div>`;return}
+  list.innerHTML=sorted.map(e=>{const d=new Date(e.date+'T00:00'),ds=d.toLocaleDateString(loc,{weekday:'short',month:'short',day:'numeric'}),mood=MOODS.find(m=>m[1]===e.mood),diff=DIFFS.find(m=>m[1]===e.diff);
+    const tags=e.activities.map(a=>`<span class="e-tag">${actEmoji(a)} ${actLabel(a)}</span>`).join('');
+    return `<div class="entry"><div class="e-top"><span class="e-date">${ds} ${mood?mood[0]:''}</span><span class="e-meta">${e.minutes}m${e.words?' · '+e.words+' '+t('unit_words'):''}${diff?' · '+diff[0]:''}</span></div>${e.topic?`<div class="e-note"><b>${esc(e.topic)}</b></div>`:''}${tags?`<div class="e-tags">${tags}</div>`:''}${e.notes?`<div class="e-note">${esc(e.notes)}</div>`:''}<button class="e-del" onclick="delEntry(${e.id})">${t('delete')}</button></div>`}).join('')}
+function esc(s){return s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+function delEntry(id){if(!confirm(t('c_delete')))return;state=state.filter(e=>e.id!==id);save();render();toast(t('deleted'))}
+
+/* ---------- data ---------- */
+function exportData(){const blob=new Blob([JSON.stringify({entries:state,vocab,goal,name:userName,exported:new Date().toISOString()},null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='espanol-backup-'+todayStr()+'.json';a.click();localStorage.setItem(BKEY,state.length);backupSnoozed=true;document.getElementById('backupBanner').style.display='none';toast(t('backup_dl'))}
+function importData(ev){const f=ev.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const d=JSON.parse(r.result),ents=Array.isArray(d)?d:d.entries;if(!Array.isArray(ents))throw 0;if(!confirm(t('c_import').replace('{n}',ents.length)))return;state=ents;if(d.goal){goal=d.goal;localStorage.setItem(GKEY,goal)}if(Array.isArray(d.vocab)){vocab=d.vocab;saveVocab()}if(d.name){userName=d.name;localStorage.setItem(NKEY,userName);document.getElementById('f-name').value=userName;applyPersonalization()}save();render();toast(t('imported').replace('{n}',ents.length));go('dash')}catch(e){toast(t('read_fail'))}};r.readAsText(f);ev.target.value=''}
+function clearAll(){if(!confirm(t('c_erase1')))return;if(!confirm(t('c_erase2')))return;state=[];vocab=[];saveVocab();unlocked=new Set();saveAch();save();render();toast(t('erased'))}
+
+/* ---------- vocabulary ---------- */
+const RV_DAYS=[1,1,2,4,7,15,30]; // days until next review per box level
+function isMastered(w){return (w.box||0)>=5}
+function addWord(){
+  const es=document.getElementById('v-es').value.trim();
+  const mean=document.getElementById('v-mean').value.trim();
+  const ex=document.getElementById('v-ex').value.trim();
+  if(!es){toast(t('v_need_es'));return}
+  vocab.push({id:Date.now(),es,mean,ex,box:0,due:Date.now(),created:Date.now()});
+  saveVocab();
+  document.getElementById('v-es').value='';document.getElementById('v-mean').value='';document.getElementById('v-ex').value='';
+  document.getElementById('v-es').focus();
+  renderVocab();toast(t('v_added'));
+}
+function delWord(id){if(!confirm(t('c_vdelete')))return;vocab=vocab.filter(w=>w.id!==id);saveVocab();renderVocab()}
+function renderVocab(){
+  const total=vocab.length,mastered=vocab.filter(isMastered).length,due=vocab.filter(w=>w.due<=Date.now()).length;
+  document.getElementById('vTotal').textContent=total;
+  document.getElementById('vMastered').textContent=mastered;
+  document.getElementById('vLearning').textContent=total-mastered;
+  document.getElementById('reviewBtn').textContent=due>0?t('v_review_n').replace('{n}',due):t('v_review');
+  const q=(document.getElementById('v-search')?.value||'').toLowerCase();
+  const list=[...vocab].sort((a,b)=>b.created-a.created).filter(w=>!q||w.es.toLowerCase().includes(q)||(w.mean||'').toLowerCase().includes(q));
+  const el=document.getElementById('vocabList');
+  if(!list.length){el.innerHTML=`<div class="empty"><div class="em">📕</div><p>${total?'—':t('v_empty')}</p></div>`;return}
+  el.innerHTML=list.map(w=>{const m=isMastered(w);const dots='●'.repeat(Math.min(w.box||0,5))+'○'.repeat(Math.max(0,5-(w.box||0)));
+    return `<div class="entry vword"><div class="e-top"><span class="e-es">${esc(w.es)}</span><span class="${m?'vmaster':'vbox'}">${m?t('v_master_tag'):dots}</span></div>${w.mean?`<div class="e-note">${esc(w.mean)}</div>`:''}${w.ex?`<div class="e-ex">“${esc(w.ex)}”</div>`:''}<button class="e-del" onclick="delWord(${w.id})">${t('delete')}</button></div>`}).join('');
+}
+
+/* flashcard review with simple Leitner spaced repetition */
+let rvQueue=[],rvIdx=0,rvCount=0,rvShown=false;
+function startReview(){
+  if(!vocab.length){toast(t('v_no_words'));return}
+  const due=vocab.filter(w=>w.due<=Date.now());
+  rvQueue=(due.length?due:[...vocab]).sort(()=>Math.random()-0.5);
+  rvIdx=0;rvCount=0;document.getElementById('review').classList.add('show');showCard();
+}
+function showCard(){
+  if(rvIdx>=rvQueue.length){finishReview();return}
+  const w=rvQueue[rvIdx];rvShown=false;
+  document.getElementById('rvProgress').textContent=(rvIdx+1)+' / '+rvQueue.length;
+  document.getElementById('rvClose').textContent=t('v_close');
+  document.getElementById('rvWord').textContent=w.es;
+  document.getElementById('rvMean').textContent=w.mean||'—';document.getElementById('rvMean').style.display='none';
+  const ex=document.getElementById('rvEx');ex.textContent=w.ex?'“'+w.ex+'”':'';ex.style.display='none';
+  document.getElementById('rvHint').textContent=t('v_tap');document.getElementById('rvHint').style.display='block';
+  document.getElementById('rvBtns').style.visibility='hidden';
+  document.getElementById('rvAgain').textContent=t('v_again');document.getElementById('rvGot').textContent=t('v_got');
+}
+function revealCard(){
+  if(rvShown)return;rvShown=true;
+  document.getElementById('rvMean').style.display='block';
+  const w=rvQueue[rvIdx];if(w.ex)document.getElementById('rvEx').style.display='block';
+  document.getElementById('rvHint').style.display='none';
+  document.getElementById('rvBtns').style.visibility='visible';
+}
+function answer(got){
+  const w=rvQueue[rvIdx];
+  if(got){w.box=Math.min((w.box||0)+1,6);rvCount++}else{w.box=0}
+  const days=RV_DAYS[Math.min(w.box,RV_DAYS.length-1)];
+  w.due=Date.now()+(got?days*86400000:600000); // wrong → retry in 10 min
+  saveVocab();rvIdx++;showCard();
+}
+function finishReview(){closeReview();confetti();toast(t('v_done')+' · '+rvCount+' '+t('v_reviewed'))}
+function closeReview(){document.getElementById('review').classList.remove('show');renderVocab()}
+
+/* ---------- effects ---------- */
+let toastT;function toast(msg){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>el.classList.remove('show'),2400)}
+function confetti(){const cols=['#c1272d','#f0a500','#3a9d6e','#ffd97a','#9c1d22','#7c5cbf'];for(let i=0;i<46;i++){const d=document.createElement('div');d.className='confetti';d.style.left=Math.random()*100+'vw';d.style.background=cols[i%cols.length];d.style.animationDelay=(Math.random()*0.35)+'s';d.style.animationDuration=(1.8+Math.random()*1.2)+'s';document.body.appendChild(d);setTimeout(()=>d.remove(),3200)}}
+function showModal(emo,ttl,sub){document.getElementById('mEmo').textContent=emo;document.getElementById('mTtl').textContent=ttl;document.getElementById('mSub').textContent=sub;document.getElementById('modal').classList.add('show')}
+function closeModal(){document.getElementById('modal').classList.remove('show')}
+
+/* ---------- init ---------- */
+document.getElementById('f-name').value=userName;
+applyPersonalization();
+/* ask the browser to keep our data and not auto-evict it */
+if(navigator.storage&&navigator.storage.persist){navigator.storage.persist().catch(()=>{})}
+buildForm();applyLang();render();booted=true;
+</script>
+</body>
+</html>
